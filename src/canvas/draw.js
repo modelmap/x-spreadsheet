@@ -387,7 +387,7 @@ class Draw {
     ctx.beginPath();
     ctx.fillStyle = bgcolor || '#fff';
     ctx.rect(npxLine(x + 1), npxLine(y + 1), npx(width - 2), npx(height - 2));
-    ctx.clip();
+    // ctx.clip();
     ctx.fill();
     dtextcb();
     ctx.restore();
