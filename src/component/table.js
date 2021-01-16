@@ -312,12 +312,15 @@ class Table {
     // events to computer the values of its cell references. This recursion
     // will continue until the original formula is fully resolved.
     const getFormulaParserCellValue = function(cellCoord) {
-      let cellText = that.data.getCellTextOrDefault(cellCoord.row.index, cellCoord.column.index);
+      let cell = that.data.getCell(cellCoord.row.index, cellCoord.column.index);
+
+
+      const formula = cell.formula || typeof(cell.text) === 'string' && cell.text[0] === '=' ? cell.text.slice(1) : '';
      
       // If cell contains a formula, return the result of the formula rather
       // than the formula text itself
-      if (cellText && cellText.length > 0 && cellText[0] === '=') {
-        const parsedResult = that.formulaParser.parse(cellText.slice(1));
+      if (formula) {
+        const parsedResult = that.formulaParser.parse(formula);
 
         // If there's an error, return the error instead of the result
         return (parsedResult.error) ?
@@ -328,7 +331,7 @@ class Table {
       // The cell doesn't contain a formula, so return its contents as a value.
       // If the string is a number, return as a number;
       // otherwise, return as a string.
-      return Number(cellText) || cellText;
+      return typeof(cell.value) === 'number' ? cell.value : Number(cell.value || cell.text || cell) || cell.value || cell.text || cell;
     }
 
     this.formulaParser.on('callCellValue', function(cellCoord, done) {
